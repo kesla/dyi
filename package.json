@@ -7,6 +7,10 @@
   "author": "David Björklund <david.bjorklund@gmail.com>",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "prepare": "yarn build"
+  },
   "dependencies": {
     "get-pkg-json": "^1.0.0",
     "sort-json": "^2.0.0",
@@ -14,11 +18,13 @@
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
-    "@types/yargs": "^13.0.3"
+    "@types/yargs": "^13.0.3",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.3"
   },
   "peerDependencies": {
     "yarn": "*",
     "yarn-dedupe": "*"
   },
-  "bin": "./cli.js"
+  "bin": "./cli"
 }

@@ -1,23 +1,18 @@
-#!/usr/bin/env node
-// @ts-check
-
-const yargs = require('yargs')
-const { execSync } = require('child_process')
-const getPkgJson = require('get-pkg-json')
-const sortJson = require('sort-json')
-const fs = require('fs')
+import yargs from 'yargs'
+import { execSync } from 'child_process'
+import getPkgJson from 'get-pkg-json'
+import sortJson from 'sort-json'
+import fs from 'fs'
 
 const pkg = require(`${process.cwd()}/package.json`)
 
 const { argv } = yargs.array(['a', 'd', 'r'])
 
-const { a: add = [], d: dev = [], r: remove = [] } = argv
+const add = (argv.a ?? []) as string[]
+const dev = (argv.d ?? []) as string[]
+const remove = (argv.r ?? []) as string[]
 
-/**
- *
- * @param {string} script
- */
-const exec = (script) => {
+const exec = (script: string) => {
   const t = `> ${script}`
   console.time(t)
   execSync(script)
@@ -28,7 +23,7 @@ const name = `$ ${process.argv.slice(2).join(' ')}`
 
 console.time(name)
 
-const removeDependency = async (pkgName) => {
+const removeDependency = async (pkgName: string) => {
   const metadata = await getPkgJson(pkgName)
 
   if (pkg.devDependencies) {
@@ -42,24 +37,23 @@ const removeDependency = async (pkgName) => {
   return metadata
 }
 
-const addDependency = (dependencyKey) => async (pkgName) => {
+const addDependency = (dependencyKey: string) => async (pkgName: string) => {
   const metadata = await removeDependency(pkgName)
 
   pkg[dependencyKey] = pkg[dependencyKey] || {}
   pkg[dependencyKey][metadata.name] = `^${metadata.version}`
   pkg[dependencyKey] = sortJson(pkg[dependencyKey])
 }
-
 ;(async () => {
   await Promise.all([
     ...add.map(addDependency('dependencies')),
     ...dev.map(addDependency('devDependencies')),
-    ...remove.map(removeDependency),
+    ...remove.map(removeDependency)
   ])
 
   fs.writeFileSync(
     `${process.cwd()}/package.json`,
-    JSON.stringify(pkg, null, 2),
+    JSON.stringify(pkg, null, 2)
   )
 
   exec('yarn')
