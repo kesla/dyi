@@ -20,7 +20,5 @@
     "yarn": "*",
     "yarn-dedupe": "*"
   },
-  "scripts": {
-    "dyi": "./cli.js"
-  }
+  "bin": "./cli.js"
 }
